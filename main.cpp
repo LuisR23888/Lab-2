@@ -20,6 +20,9 @@
 #define BTN2 5
 #define BTN3 21
 
+// Funciones
+void encenderLEDS(bool t1, bool t2, bool t3, bool t4);
+
 // Variables globales
 uint8_t estadoBTN1 = 0;
 uint8_t estadoBTN2 = 0;
@@ -72,24 +75,32 @@ void loop() {
   unsigned long currentTime = millis();
   // put your main code here, to run repeatedly:
 
+  // lectura de estado de los 3 botones a utilizar
   bool reading1 = digitalRead(BTN1);
   bool reading2 = digitalRead(BTN2);
   bool reading3 = digitalRead(BTN3);
   
-  
+  // Cambio de contador utilizando un solo boton con debunce
   if (reading3 != lastButtonState3) {
     lastDebounceTime3 = currentTime;
   }
   if ((currentTime - lastDebounceTime3) > debounceDelay) {
-    if (reading3 == HIGH && buttonState3 == LOW) {
-      contadorC++;
+    if (reading3 == HIGH && buttonState3 == LOW && contadorC == 0) {
+      contadorC = 1;
+      contador = 0;
+    }else if(reading3 == HIGH && buttonState3 == LOW && contadorC == 1){
+      contadorC = 0;
+      contador = 0;
     }
     buttonState3 = reading3;
   }
   lastButtonState3 = reading3;
 
+  // Cambio entre contadores gracias al contadorC
   switch(contadorC){
     case 0:
+
+    // Botones de avanzar y retroceder con su respectivo debounce
     if (reading1 != lastButtonState1) {
       lastDebounceTime1 = currentTime;
     }
@@ -114,61 +125,46 @@ void loop() {
     }
     lastButtonState2 = reading2;
 
+    // Encendido de leds
     switch (contador){
       case 0:
-        digitalWrite(LED_A, LOW);
-        digitalWrite(LED_M, LOW);
-        digitalWrite(LED_V, LOW);
-        digitalWrite(LED_B, LOW);
+        encenderLEDS(LOW, LOW, LOW, LOW);
         break;
       case 1: 
-        digitalWrite(LED_A, HIGH);
-        digitalWrite(LED_M, LOW);
-        digitalWrite(LED_V, LOW);
-        digitalWrite(LED_B, LOW);
+        encenderLEDS(HIGH, LOW, LOW, LOW);
         break;
       case 2:
-        digitalWrite(LED_A, LOW);
-        digitalWrite(LED_M, HIGH);
-        digitalWrite(LED_V, LOW);
-        digitalWrite(LED_B, LOW);
+        encenderLEDS(LOW, HIGH, LOW, LOW);
         break;
       case 3: 
-        digitalWrite(LED_A, LOW);
-        digitalWrite(LED_M, LOW);
-        digitalWrite(LED_V, HIGH);
-        digitalWrite(LED_B, LOW);
+        encenderLEDS(LOW, LOW, HIGH, LOW);
         break;
       case 4: 
-        digitalWrite(LED_A, LOW);
-        digitalWrite(LED_M, LOW);
-        digitalWrite(LED_V, LOW);
-        digitalWrite(LED_B, HIGH);
+        encenderLEDS(LOW, LOW, LOW, HIGH);
         break;
       }
+    break;
+    
     case 1:
-    //reading1 = digitalRead(BTN1);
     if (reading1 != lastButtonState1) {
       lastDebounceTime1 = currentTime;
     }
     if ((currentTime - lastDebounceTime1) > debounceDelay) {
       if (reading1 == LOW && buttonState1 == HIGH) {
         contador++;
-        if (contador > 4) contador = 0;
+        if (contador > 15) contador = 0;
       }
       buttonState1 = reading1;
     }
     lastButtonState1 = reading1;
   
-
-    //reading2 = digitalRead(BTN2);
     if (reading2 != lastButtonState2) {
       lastDebounceTime2 = currentTime;
     }
     if ((currentTime - lastDebounceTime2) > debounceDelay) {
       if (reading2 == HIGH && buttonState2 == LOW) {
         contador--;
-        if (contador < 0) contador = 4;
+        if (contador < 0) contador = 15;
       }
       buttonState2 = reading2;
     }
@@ -176,41 +172,63 @@ void loop() {
 
     switch (contador){
       case 0:
-        digitalWrite(LED_A, LOW);
-        digitalWrite(LED_M, LOW);
-        digitalWrite(LED_V, LOW);
-        digitalWrite(LED_B, LOW);
+        encenderLEDS(LOW, LOW, LOW, LOW);
         break;
       case 1: 
-        digitalWrite(LED_A, HIGH);
-        digitalWrite(LED_M, LOW);
-        digitalWrite(LED_V, LOW);
-        digitalWrite(LED_B, LOW);
+        encenderLEDS(LOW, LOW, LOW, HIGH);
         break;
       case 2:
-        digitalWrite(LED_A, LOW);
-        digitalWrite(LED_M, HIGH);
-        digitalWrite(LED_V, LOW);
-        digitalWrite(LED_B, LOW);
+        encenderLEDS(LOW, LOW, HIGH, LOW);
         break;
       case 3: 
-        digitalWrite(LED_A, LOW);
-        digitalWrite(LED_M, LOW);
-        digitalWrite(LED_V, HIGH);
-        digitalWrite(LED_B, LOW);
+        encenderLEDS(LOW, LOW, HIGH, HIGH);
         break;
       case 4: 
-        digitalWrite(LED_A, LOW);
-        digitalWrite(LED_M, LOW);
-        digitalWrite(LED_V, LOW);
-        digitalWrite(LED_B, HIGH);
+        encenderLEDS(LOW, HIGH, LOW, LOW);
         break;
+      case 5: 
+        encenderLEDS(LOW, HIGH, LOW, HIGH);
+        break;
+      case 6: 
+        encenderLEDS(LOW, HIGH, HIGH, LOW);
+        break;
+      case 7: 
+        encenderLEDS(LOW, HIGH, HIGH, HIGH);      
+        break;
+      case 8: 
+        encenderLEDS(HIGH, LOW, LOW, LOW);
+        break;
+      case 9: 
+        encenderLEDS(HIGH, LOW, LOW, HIGH);
+        break;
+      case 10: 
+        encenderLEDS(HIGH, LOW, HIGH, LOW);
+        break;
+      case 11: 
+        encenderLEDS(HIGH, LOW, HIGH, HIGH);
+        break;
+      case 12: 
+        encenderLEDS(HIGH, HIGH, LOW, LOW);
+        break;
+      case 13: 
+        encenderLEDS(HIGH, HIGH, LOW, HIGH);
+        break;
+      case 14: 
+        encenderLEDS(HIGH, HIGH, HIGH, LOW);
+        break;
+      case 15: 
+        encenderLEDS(HIGH, HIGH, HIGH, HIGH);
+        break;            
     }
-
-
+    break;
   }
+}
 
-  
+void encenderLEDS(bool t1, bool t2, bool t3, bool t4){
+  digitalWrite(LED_A,t1);
+  digitalWrite(LED_M,t2);
+  digitalWrite(LED_V,t3);
+  digitalWrite(LED_B,t4);
 }
 
 
